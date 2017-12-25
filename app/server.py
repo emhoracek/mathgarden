@@ -69,6 +69,12 @@ def create_learner():
     return jsonify(learner.to_dict())
 
 
+@app.route('/api/learners', methods=['GET'])
+def get_learners():
+    learners = Learner.query.all()
+    return (jsonify(map(lambda l: l.to_dict(), learners)))
+
+
 @app.route('/api/learners/<int:id>', methods=['GET'])
 def get_learner(id):
     learner = Learner.query.filter_by(id=id).first()

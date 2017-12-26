@@ -4,7 +4,9 @@
 
     <ul>
       <li v-for="learner in learners">
-        <a :href="learner_url(learner)">{{ learner_identifier(learner) }}</a>
+        <router-link :to="{ name: 'Learner', params: { id: learner.id } }">
+          {{ learner_identifier(learner) }}
+        </router-link>
       </li>
     </ul>
   </div>
@@ -21,9 +23,6 @@
           'goal': ''}] }
     },
     methods: {
-      learner_url (learner) {
-        return `${learner.id}`
-      },
       learner_identifier (learner) {
         return learner.name || 'anonymous'
       }

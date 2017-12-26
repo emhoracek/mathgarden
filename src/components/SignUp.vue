@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wrapper">
     <h2>Join the math garden</h2>
     <form @submit="submit">
       <ul>
@@ -90,9 +90,9 @@
 </script>
 
 <style>
-
-div { width: 550px;
-      align-self: center }
+div.wrapper { width: 90%;
+              max-width: 550px;
+              margin: 0 auto }
 
 .email-errors { width: 100%;
                 margin: 4px;

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wrapper">
     <h2>All Learners</h2>
 
     <ul>
@@ -37,6 +37,7 @@
 </script>
 
 <style>
-div { width: 550px;
-      align-self: center }
+div.wrapper { width: 90%;
+              max-width: 550px;
+              margin: 0 auto }
 </style>

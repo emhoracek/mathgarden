@@ -14,9 +14,11 @@
 export default {
   data () {
     return { 'learner': {
-      'name': 'A',
-      'id': 5,
-      'email': 'blah@blah.com' } }
+      'name': '',
+      'id': 0,
+      'email': '',
+      'slack_name': '',
+      'goal': '' } }
   },
   computed: {
     learner_identifier () {

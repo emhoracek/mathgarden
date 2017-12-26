@@ -14,9 +14,11 @@
   export default {
     data () {
       return { 'learners': [
-        { 'name': 'A',
-          'id': 5,
-          'email': 'blah@blah.com' }] }
+        { 'name': '',
+          'id': 0,
+          'slack_name': '',
+          'email': '',
+          'goal': ''}] }
     },
     methods: {
       learner_url (learner) {

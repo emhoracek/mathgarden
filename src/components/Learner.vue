@@ -2,23 +2,27 @@
   <div class="wrapper">
     <h2>Learner Profile: {{ learner_identifier }}</h2>
 
-    <dl>
-      <div><dt>Name</dt><dd>{{ learner.name }}</dd></div>
-      <div><dt>Slack name</dt><dd>{{ learner.slack_name }}</dd></div>
-      <div><dt>Goal</dt><dd>{{ learner.goal }}</dd></div>
-    </dl>
+    <transition name="fade">
+      <dl v-if="loaded">
+        <div><dt>Name</dt><dd>{{ learner.name }}</dd></div>
+        <div><dt>Slack name</dt><dd>{{ learner.slack_name }}</dd></div>
+        <div><dt>Goal</dt><dd>{{ learner.goal }}</dd></div>
+      </dl>
+    </transition>
   </div>
 </template>
 
 <script>
 export default {
   data () {
-    return { 'learner': {
-      'name': '',
-      'id': 0,
-      'email': '',
-      'slack_name': '',
-      'goal': '' } }
+    return {
+      'learner': {
+        'name': '',
+        'id': 0,
+        'email': '',
+        'slack_name': '',
+        'goal': '' },
+      'loaded': false }
   },
   computed: {
     learner_identifier () {
@@ -29,7 +33,10 @@ export default {
     const id = this.$route.params.id
     fetch(`http://localhost:6060/api/learners/${id}`)
       .then((resp) => resp.json())
-      .then((json) => { this.learner = json })
+      .then((json) => {
+        this.learner = json
+        this.loaded = true
+      })
   }
 }
 </script>
@@ -50,5 +57,4 @@ dt { flex: 1 0 120px }
 
 dd { flex: 1 0 220px;
      margin: 0;}
-
 </style>

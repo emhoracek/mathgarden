@@ -26,4 +26,10 @@ header { padding: 16px;
 main { display: flex;
        flex-direction: column }
 
+.fade-enter-active, .fade-leave-active {
+    transition: opacity .5s
+}
+.fade-enter, .fade-leave-to {
+    opacity: 0
+}
 </style>

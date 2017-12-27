@@ -119,10 +119,6 @@ div.wrapper { width: 90%;
               max-width: 550px;
               margin: 0 auto }
 
-.error { color: red; }
-.full-width { width: 100% }
-.required { color: grey }
-
 form { margin: auto }
 
 ul { padding-left: 0 }
@@ -132,18 +128,14 @@ ul li { display: flex;
         align-items: center;
         margin: 16px 0 16px 0; }
 
-li p { display: block;
-       margin: 8px 0 8px 0;
+li p { margin: 8px 0 8px 0;
        color: darkgrey }
 
 label { flex: 1 0 120px;
         max-width: 220px;
         display: inline-block }
 
-input { flex: 1 0 220px;
-        border: 1px solid black;
-        font-size: 16px;
-        padding: 8px }
+input { flex: 1 0 220px; }
 
 textarea { flex: 1 0 220px;
            border: 1px solid black;
@@ -154,11 +146,5 @@ textarea { flex: 1 0 220px;
 p.button { display: flex;
            flex-direction: column }
 
-button { text-align: center;
-         align-self: end;
-         font-size: 16px;
-         padding: 8px;
-         margin-right: 8px;
-         border: 1px solid black;
-         border-radius: 5px; }
+button { align-self: end }
 </style>

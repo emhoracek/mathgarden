@@ -71,4 +71,20 @@ header { display: flex;
 nav { align-self: center }
 
 nav > ul > li { display: inline-block; margin-left: 16px }
+
+input { border: 1px solid black;
+        font-size: 16px;
+        padding: 8px }
+
+button { text-align: center;
+         font-size: 16px;
+         padding: 8px;
+         margin-right: 8px;
+         border: 1px solid black;
+         border-radius: 5px; }
+
+/* Utility classes */
+.error { color: red; }
+.full-width { width: 100% }
+.required { color: grey }
 </style>

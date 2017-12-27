@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import abort, request
+from flask import abort, request, g
 from flask import jsonify
 from flask_cors import CORS
 from flask_httpauth import HTTPBasicAuth
@@ -71,6 +71,33 @@ class Learner(db.Model):
         db.session.commit()
         return learner
 
+    @staticmethod
+    def update(id, email, name, slack_name, goal):
+        learner = Learner.query.filter_by(id=id).first()
+        if learner is None:
+            raise Exception("Learner doesn't exist.")
+        learner.email = email
+        learner.name = name
+        learner.slack_name = slack_name
+        learner.goal = goal
+        db.session.add(learner)
+        db.session.commit()
+        return learner
+
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except SignatureExpired:
+            print 'SIGNATURE EXPIRED!', token
+            return None
+        except BadSignature:
+            print 'BAD SIGNATURE!', token
+            return None
+        learner = Learner.query.get(data['id'])
+        return learner
+
 
 @app.route('/api/learners', methods=['POST'])
 def create_learner():
@@ -87,6 +114,17 @@ def create_learner():
         return jsonify({'error': str(msg)})
 
 
+@auth.verify_password
+def verify_token(token, we_dont_use_passwords):
+    learner = Learner.verify_auth_token(token)
+    if not learner:
+        print "NOT AUTHED"
+        return False
+    g.learner = learner
+    print "AUTHED"
+    return True
+
+
 @app.route('/api/learners', methods=['GET'])
 def get_learners():
     learners = Learner.query.all()
@@ -99,3 +137,21 @@ def get_learner(id):
     if learner is None:
         abort(400)
     return jsonify(learner.to_dict())
+
+
+@app.route('/api/learners/<int:id>', methods=['POST'])
+@auth.login_required
+def update_learner(id):
+    if g.learner.id != id:
+        return jsonify({'error': 'Not authorized'})
+    json = request.get_json()
+    email = json["email"]
+    name = json["name"]
+    slack_name = json["slack_name"]
+    goal = json["goal"]
+    try:
+        learner = Learner.update(id, email, name, slack_name, goal)
+        if learner:
+            return jsonify(learner.to_auth_dict())
+    except Exception, msg:
+        return jsonify({'error': str(msg)})

@@ -45,9 +45,9 @@ class Learner(db.Model):
     @staticmethod
     def create(email, name, slack_name, goal):
         if email is None:
-            return None
+            raise Exception("An email is required.")
         if Learner.query.filter_by(email=email).first() is not None:
-            return None
+            raise Exception("That email is already in use.")
         learner = Learner(email=email,
                           name=name,
                           slack_name=slack_name,
@@ -65,8 +65,12 @@ def create_learner():
     name = json["name"]
     slack_name = json["slack_name"]
     goal = json["goal"]
-    learner = Learner.create(email, name, slack_name, goal)
-    return jsonify(learner.to_dict())
+    try:
+        learner = Learner.create(email, name, slack_name, goal)
+        if learner:
+            return jsonify(learner.to_dict())
+    except Exception, msg:
+        return jsonify({'error': str(msg)})
 
 
 @app.route('/api/learners', methods=['GET'])

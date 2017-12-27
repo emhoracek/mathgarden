@@ -87,4 +87,6 @@ button { text-align: center;
 .error { color: red; }
 .full-width { width: 100% }
 .required { color: grey }
+
+li { margin: 16px 0 16px 0; }
 </style>

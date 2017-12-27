@@ -4,17 +4,17 @@
 
     <transition name="fade">
       <ul v-if="loaded">
-        <li v-for="learner in learners">
-          <router-link :to="{ name: 'Learner', params: { id: learner.id } }">
-            {{ learner_identifier(learner) }}
-          </router-link>
-        </li>
+        <LearnerItem v-for="learner in learners"
+                     :learner="learner"
+                     :key="learner.id" />
       </ul>
     </transition>
   </div>
 </template>
 
 <script>
+  import LearnerItem from './LearnerItem'
+
   export default {
     data () {
       return { 'blah': false,
@@ -26,6 +26,7 @@
             'email': '',
             'goal': '' } ] }
     },
+    components: { 'LearnerItem': LearnerItem },
     methods: {
       learner_identifier (learner) {
         return learner.name || 'anonymous'

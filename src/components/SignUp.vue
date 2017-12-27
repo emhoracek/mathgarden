@@ -123,10 +123,10 @@ form { margin: auto }
 
 ul { padding-left: 0 }
 
-ul li { display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        margin: 16px 0 16px 0; }
+li { display: flex;
+     flex-wrap: wrap;
+     align-items: center;
+     margin: 16px 0 16px 0; }
 
 li p { margin: 8px 0 8px 0;
        color: darkgrey }

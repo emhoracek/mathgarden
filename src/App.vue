@@ -79,7 +79,6 @@ input { border: 1px solid black;
 button { text-align: center;
          font-size: 16px;
          padding: 8px;
-         margin-right: 8px;
          border: 1px solid black;
          border-radius: 5px; }
 

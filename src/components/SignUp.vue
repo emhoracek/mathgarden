@@ -17,7 +17,7 @@
         <li>
           <label>LG Slack user <span class="required">(optional)</span></label>
           <input v-model="learner.slack_name" />
-          <p class="full-width">If you are a <a href="https://lg-slack-automate.herokuapp.com/">Learning Gardens Slack chat</a> user, enter your username here.</p>
+          <p class="full-width">If you are a <a href="https://lg-slack-automate.herokuapp.com/">Learning Gardens Slack chat</a> user, you can enter your username here.</p>
         </li>
         <li>
           <label>Goal <span class="required">(optional)</span></label>
@@ -38,6 +38,9 @@
 </template>
 
 <script>
+  import Cookie from 'js-cookie'
+  import bus from '../bus'
+
   export default {
     data () {
       return {
@@ -94,11 +97,18 @@
           }).then((json) => {
             this.errors = {}
             if (json.id) {
+              this.setTokenAndIdInCookie(json.token, json.id)
               this.$router.push({ name: 'Learner', params: { 'id': json.id } })
             } else {
               this.errors.general = json.error || 'Please try again.'
             }
           })
+      },
+      setTokenAndIdInCookie (token, id) {
+        Cookie.set('mathgarden_token', token, { expires: 7 })
+        Cookie.set('mathgarden_id', id, { expires: 7 })
+        bus.$emit('updateLogin', token, id)
+        this.logged_in = true
       }
     }
   }

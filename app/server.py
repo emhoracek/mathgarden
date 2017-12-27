@@ -2,10 +2,15 @@ from flask import Flask
 from flask import abort, request
 from flask import jsonify
 from flask_cors import CORS
+from flask_httpauth import HTTPBasicAuth
 from flask_sqlalchemy import SQLAlchemy
 from os import environ
 from datetime import datetime
 import logging
+from itsdangerous import (TimedJSONWebSignatureSerializer
+                          as Serializer, BadSignature, SignatureExpired)
+
+auth = HTTPBasicAuth()
 
 logger = logging.getLogger(__name__)
 logging.basicConfig()
@@ -32,6 +37,10 @@ class Learner(db.Model):
     goal = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    def generate_auth_token(self, expiration=2592000):
+        s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
+        return s.dumps({'id': self.id})
+
     def to_dict(self):
         return {
             'id': self.id,
@@ -41,6 +50,11 @@ class Learner(db.Model):
             'goal': self.goal,
             'created_at': self.created_at.strftime('%Y-%m-%d'),
         }
+
+    def to_auth_dict(self):
+        dict = self.to_dict()
+        dict.update(token=self.generate_auth_token())
+        return dict
 
     @staticmethod
     def create(email, name, slack_name, goal):
@@ -68,7 +82,7 @@ def create_learner():
     try:
         learner = Learner.create(email, name, slack_name, goal)
         if learner:
-            return jsonify(learner.to_dict())
+            return jsonify(learner.to_auth_dict())
     except Exception, msg:
         return jsonify({'error': str(msg)})
 

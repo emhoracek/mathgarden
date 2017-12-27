@@ -7,6 +7,11 @@
         <ul>
           <li><router-link :to="{ name: 'SignUp' }">Sign up</router-link></li>
           <li><router-link :to="{ name: 'Learners' }">Learners</router-link></li>
+          <li v-if="loggedIn">
+            <router-link :to="{ name: 'Learner', params: { id: learnerId } }">
+              My profile
+            </router-link>
+          </li>
         </ul>
       </nav>
     </header>
@@ -18,9 +23,26 @@
 </template>
 
 <script>
-export default {
-  name: 'app'
-}
+   import Cookie from 'js-cookie'
+   import bus from './bus.js'
+
+   export default {
+     data () {
+       return {
+         learnerId: Cookie.get('mathgarden_id'),
+         loggedIn: Cookie.get('mathgarden_token')
+       }
+     },
+     methods: {
+       updateLogin (loggedIn, learnerId) {
+         this.learnerId = learnerId
+         this.loggedIn = loggedIn
+       }
+     },
+     mounted () {
+       bus.$on('updateLogin', this.updateLogin)
+     }
+   }
 </script>
 
 <style>

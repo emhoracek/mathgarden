@@ -169,20 +169,3 @@ def update_authed_learner():
         return jsonify(g.learner.to_authed_dict())
     except Exception, msg:
         return jsonify({'error': str(msg)})
-
-
-@app.route('/api/learners/<int:id>', methods=['POST'])
-@auth.login_required
-def update_learner(id):
-    if g.learner.id != id:
-        return jsonify({'error': 'Not authorized'})
-    json = request.get_json()
-    name = json["name"]
-    slack_name = json["slack_name"]
-    goal = json["goal"]
-    privacy = json["privacy"]
-    try:
-        g.learner.update(name, slack_name, goal, privacy)
-        return jsonify(g.learner.to_authed_dict())
-    except Exception, msg:
-        return jsonify({'error': str(msg)})

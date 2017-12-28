@@ -8,7 +8,8 @@ from os import environ
 from datetime import datetime
 import logging
 from itsdangerous import (TimedJSONWebSignatureSerializer
-                          as Serializer, BadSignature, SignatureExpired)
+                          as Serializer, BadSignature,
+                          URLSafeSerializer, SignatureExpired)
 
 auth = HTTPBasicAuth()
 
@@ -36,6 +37,7 @@ class Learner(db.Model):
     slack_name = db.Column(db.Text)
     goal = db.Column(db.Text)
     privacy = db.Column(db.Text)
+    activated_at = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def generate_auth_token(self, expiration=2592000):
@@ -56,7 +58,8 @@ class Learner(db.Model):
         authed_fields = {
             'email': self.email,
             'token': self.generate_auth_token(),
-            'privacy': self.privacy
+            'privacy': self.privacy,
+            'activated_at': self.activated_at
         }
         dict.update(authed_fields)
         return dict
@@ -89,17 +92,33 @@ class Learner(db.Model):
     @staticmethod
     def verify_auth_token(token):
         s = Serializer(app.config['SECRET_KEY'])
-        print "Token", token
         try:
             data = s.loads(token)
         except SignatureExpired:
-            print 'SIGNATURE EXPIRED!', token
             return None
         except BadSignature:
-            print 'BAD SIGNATURE!', token
             return None
         learner = Learner.query.get(data['id'])
         return learner
+
+    @staticmethod
+    def verify_email_token(token):
+        s = URLSafeSerializer(app.config['SECRET_KEY'])
+        try:
+            email = s.loads(token)
+        except SignatureExpired:
+            return None
+        except BadSignature:
+            return None
+        learner = Learner.query.filter_by(email=email).first()
+        learner.activated_at = datetime.utcnow()
+        return learner
+
+    def send_email_confirmation(self):
+        s = URLSafeSerializer(app.config['SECRET_KEY'])
+        serialized_email = s.dumps(self.email)
+        print 'sending to ', self.email
+        print 'http://localhost:8080/#/confirm_email/', serialized_email
 
 
 @app.route('/api/learners', methods=['POST'])
@@ -113,19 +132,26 @@ def create_learner():
     try:
         learner = Learner.create(email, name, slack_name, goal, privacy)
         if learner:
+            learner.send_email_confirmation()
             return jsonify(learner.to_authed_dict())
     except Exception, msg:
         return jsonify({'error': str(msg)})
+
+
+@app.route('/api/email_confirmations/<token>', methods=['POST'])
+def confirm_email(token):
+    learner = Learner.verify_email_token(token)
+    if learner is None:
+        abort(400)
+    return jsonify(learner.to_authed_dict())
 
 
 @auth.verify_password
 def verify_token(token, we_dont_use_passwords):
     learner = Learner.verify_auth_token(token)
     if not learner:
-        print "NOT AUTHED"
         return False
     g.learner = learner
-    print "AUTHED"
     return True
 
 

@@ -4,6 +4,7 @@ import SignUp from '@/components/SignUp'
 import Learners from '@/components/Learners'
 import Learner from '@/components/Learner'
 import LearnerEdit from '@/components/LearnerEdit'
+import EmailConfirmation from '@/components/EmailConfirmation'
 
 Vue.use(Router)
 
@@ -38,7 +39,12 @@ export default new Router({
       path: '/learners/:id',
       name: 'Learner',
       component: Learner
-    } /*,
+    },
+    {
+      path: '/confirm_email/:token',
+      name: 'EmailConfirmation',
+      component: EmailConfirmation
+    }/*,
     {
       path: '/learners/:id/checkins',
       name: 'LearnerCheckins',

@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import SignUp from '@/components/SignUp'
 import Learners from '@/components/Learners'
 import Learner from '@/components/Learner'
+import LearnerEdit from '@/components/LearnerEdit'
 
 Vue.use(Router)
 
@@ -27,6 +28,11 @@ export default new Router({
       path: '/learners',
       name: 'Learners',
       component: Learners
+    },
+    {
+      path: '/learners/me',
+      name: 'LearnerEdit',
+      component: LearnerEdit
     },
     {
       path: '/learners/:id',

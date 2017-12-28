@@ -42,9 +42,3 @@
     }
   }
 </script>
-
-<style>
-div.wrapper { width: 90%;
-              max-width: 550px;
-              margin: 0 auto }
-</style>

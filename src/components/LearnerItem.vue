@@ -36,3 +36,8 @@
     }
   }
 </script>
+
+<style>
+span.slack_name { margin-left: 8px }
+span.goal { margin-left: 8px }
+</style>

@@ -8,7 +8,7 @@
           <li><router-link :to="{ name: 'SignUp' }">Sign up</router-link></li>
           <li><router-link :to="{ name: 'Learners' }">Learners</router-link></li>
           <li v-if="loggedIn">
-            <router-link :to="{ name: 'Learner', params: { id: learnerId } }">
+            <router-link :to="{ name: 'LearnerEdit' }">
               My profile
             </router-link>
           </li>
@@ -55,6 +55,10 @@ header { padding: 16px;
 main { display: flex;
        flex-direction: column;
        margin-top: 36px }
+
+div.wrapper { width: 90%;
+              max-width: 550px;
+              margin: 0 auto }
 
 .fade-enter-active, .fade-leave-active {
     transition: opacity .5s

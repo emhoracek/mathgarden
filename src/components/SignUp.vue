@@ -24,6 +24,11 @@
           <textarea v-model="learner.goal" />
           <p class="full-width">Share what you would like to achieve by joining Learning Gardens.</p>
         </li>
+        <li>
+          <label for="privacy" class="full-width">My profile should be:</label>
+          <LearnerPrivacyOptions @updatePrivacy="updatePrivacy"
+                                 :currentPrivacy="learner.privacy" />
+        </li>
       </ul>
 
       <p class="error errors" v-if="errors.general">
@@ -40,6 +45,7 @@
 <script>
   import Cookie from 'js-cookie'
   import bus from '../bus'
+  import LearnerPrivacyOptions from './LearnerPrivacyOptions'
 
   export default {
     data () {
@@ -48,7 +54,8 @@
           email: '',
           slack_name: '',
           name: '',
-          goal: ''
+          goal: '',
+          privacy: 'shared'
         },
         errors: {
           email: '',
@@ -56,6 +63,7 @@
         }
       }
     },
+    components: { 'LearnerPrivacyOptions': LearnerPrivacyOptions },
     computed: {
       emailErrors () {
         const email = this.learner.email
@@ -78,6 +86,9 @@
             resolve('Submit it!')
           }
         })
+      },
+      updatePrivacy (privacy) {
+        this.learner.privacy = privacy
       },
       submit (e) {
         e.preventDefault()
@@ -115,12 +126,6 @@
 </script>
 
 <style>
-div.wrapper { width: 90%;
-              max-width: 550px;
-              margin: 0 auto }
-
-form { margin: auto }
-
 ul { padding-left: 0 }
 
 li { display: flex;

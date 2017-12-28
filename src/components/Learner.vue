@@ -30,6 +30,7 @@ export default {
         'id': 0,
         'email': '',
         'slack_name': '',
+        'privacy': '',
         'goal': '' },
       'loaded': false
     }
@@ -47,10 +48,6 @@ export default {
 </script>
 
 <style>
-div.wrapper { width: 90%;
-              max-width: 550px;
-              margin: 0 auto }
-
 dl { display: flex;
      flex-direction: column }
 

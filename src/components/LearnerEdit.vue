@@ -79,7 +79,6 @@ export default {
   methods: {
     submit (e) {
       e.preventDefault()
-      this.loaded = false
       let token = this.authed_token
       fetch(`http://localhost:6060/api/learners/me`, {
         method: 'POST',
@@ -92,7 +91,9 @@ export default {
       }).then((resp) => {
         return resp.json()
       }).then(this.updateLearner)
-        .then(() => { this.loaded = true })
+        .then(() => {
+          bus.$emit('updateFlash', 'Profile updated')
+        })
     },
     updatePrivacy (privacy) {
       this.learner.privacy = privacy

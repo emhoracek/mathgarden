@@ -16,6 +16,14 @@
       </nav>
     </header>
 
+    <transition name="flash">
+      <div v-if="flashMessage" class="flash">
+        <p>
+          {{ flashMessage }}
+        </p>
+      </div>
+    </transition>
+
     <main>
       <router-view/>
     </main>
@@ -30,17 +38,29 @@
      data () {
        return {
          learnerId: Cookie.get('mathgarden_id'),
-         loggedIn: Cookie.get('mathgarden_token')
+         loggedIn: Cookie.get('mathgarden_token'),
+         flashMessage: ''
        }
      },
      methods: {
        updateLogin (loggedIn, learnerId) {
          this.learnerId = learnerId
          this.loggedIn = loggedIn
+       },
+       updateFlash (flashMessage) {
+         this.flashMessage = flashMessage
+         setTimeout(this.clearFlash, 5000)
+       },
+       clearFlash () {
+         this.flashMessage = ''
+       },
+       blahFlash (m) {
+         bus.$emit('updateFlash', m)
        }
      },
      mounted () {
        bus.$on('updateLogin', this.updateLogin)
+       bus.$on('updateFlash', this.updateFlash)
      }
    }
 </script>
@@ -67,8 +87,27 @@ div.wrapper { width: 90%;
     opacity: 0
 }
 
+.flash-enter-active, .flash-leave-active {
+    transition: opacity .5s
+}
+.flash-enter, .flash-leave-to {
+    opacity: 0
+}
+
+.flash { margin: -2px auto;
+         position: absolute;
+         left: 10%;
+         right: 10%;
+         border-top: 2px solid black;
+         border-radius: 5px;
+         background: blue }
+.flash p { margin: 16px;
+           text-align: center;
+           color: white }
+
 header { display: flex;
          flex-direction: row;
+         flex-wrap: wrap;
          border: 2px solid black;
          border-width: 0 0 2px 0; }
 

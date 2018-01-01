@@ -10,8 +10,11 @@ import logging
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature,
                           URLSafeSerializer, SignatureExpired)
+from random import (SystemRandom as Random)
+from string import (ascii_letters, digits)
 
 auth = HTTPBasicAuth()
+random = Random()
 
 logger = logging.getLogger(__name__)
 logging.basicConfig()
@@ -37,6 +40,7 @@ class Learner(db.Model):
     slack_name = db.Column(db.Text)
     goal = db.Column(db.Text)
     privacy = db.Column(db.Text)
+    login_token = db.Column(db.Text)
     activated_at = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -75,6 +79,7 @@ class Learner(db.Model):
                           slack_name=slack_name,
                           goal=goal,
                           privacy=privacy,
+                          login_token=Learner.generate_login_token(),
                           created_at=datetime.utcnow())
         db.session.add(learner)
         db.session.commit()
@@ -114,6 +119,12 @@ class Learner(db.Model):
         learner.activated_at = datetime.utcnow()
         return learner
 
+    @staticmethod
+    def generate_login_token():
+        alphabet = ascii_letters + digits
+        chars = random.sample(alphabet, 30)
+        return "".join(chars)
+
     def send_email_confirmation(self):
         s = URLSafeSerializer(app.config['SECRET_KEY'])
         serialized_email = s.dumps(self.email)
@@ -143,6 +154,31 @@ def confirm_email(token):
     learner = Learner.verify_email_token(token)
     if learner is None:
         abort(400)
+    return jsonify(learner.to_authed_dict())
+
+
+@app.route('/api/magic_links/request', methods=['POST'])
+def request_magic_link():
+    json = request.get_json()
+    email = json["email"]
+    learner = Learner.query.filter_by(email=email).first()
+    if learner is None:
+        abort(400)
+    learner.login_token = Learner.generate_login_token()
+    db.session.add(learner)
+    db.session.commit()
+    print 'http://localhost:8080/#/login/', learner.login_token
+    return jsonify({'sent': True})
+
+
+@app.route('/api/magic_links/verify/<token>', methods=['POST'])
+def verify_magic_link(token):
+    learner = Learner.query.filter_by(login_token=token).first()
+    if learner is None:
+        return jsonify({'error': 'Invalid login token'})
+    learner.login_token = Learner.generate_login_token()
+    db.session.add(learner)
+    db.session.commit()
     return jsonify(learner.to_authed_dict())
 
 

@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import SignUp from '@/components/SignUp'
+import Login from '@/components/Login'
+import LoginToken from '@/components/LoginToken'
 import Learners from '@/components/Learners'
 import Learner from '@/components/Learner'
 import LearnerEdit from '@/components/LearnerEdit'
@@ -19,12 +21,17 @@ export default new Router({
       path: '/signup',
       name: 'SignUp',
       component: SignUp
-    }, /*
+    },
+    {
+      path: '/login/:token',
+      name: 'LoginToken',
+      component: LoginToken
+    },
     {
       path: '/login',
       name: 'Login',
       component: Login
-    }, */
+    },
     {
       path: '/learners',
       name: 'Learners',

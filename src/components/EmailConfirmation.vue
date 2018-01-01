@@ -18,8 +18,8 @@
       let token = this.$route.params.token
       fetch(`http://localhost:6060/api/email_confirmations/${token}`, {
         method: 'POST'
-      }) .then((resp) => resp.json())
-         .then((r) => { this.loaded = true })
+      }).then((resp) => resp.json())
+        .then((r) => { this.loaded = true })
     }
   }
 </script>
